@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2563eb;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            background: #dc2626;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <h1>Welcome, <span id="userName"></span>!</h1>
+
+        <p>You have successfully logged in.</p>
+
+        <button id="logoutButton">Log Out</button>
+
+    </div>
+
+    <script>
+        const loggedIn = localStorage.getItem("loggedIn");
+        const userName = localStorage.getItem("userName");
+
+        // Protect the dashboard
+        if (loggedIn !== "true") {
+            window.location.href = "/index.html";
+        } else {
+            document.getElementById("userName").textContent = userName;
+        }
+
+        // Log out
+        document
+            .getElementById("logoutButton")
+            .addEventListener("click", function () {
+
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("userName");
+
+                window.location.href = "/index.html";
+            });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 11px;
+            border: none;
+            border-radius: 5px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #message {
+            text-align: center;
+            margin: 20px auto;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>User Authentication</h1>
+
+    <div id="message"></div>
+
+    <div class="container">
+
+        <!-- Sign Up -->
+        <div class="form-box">
+            <h2>Sign Up</h2>
+
+            <form id="signupForm">
+
+                <label for="signupName">Name</label>
+                <input
+                    type="text"
+                    id="signupName"
+                    required
+                >
+
+                <label for="signupEmail">Email</label>
+                <input
+                    type="email"
+                    id="signupEmail"
+                    required
+                >
+
+                <label for="signupPassword">Password</label>
+                <input
+                    type="password"
+                    id="signupPassword"
+                    required
+                >
+
+                <button type="submit">Create Account</button>
+
+            </form>
+        </div>
+
+        <!-- Login -->
+        <div class="form-box">
+            <h2>Log In</h2>
+
+            <form id="loginForm">
+
+                <label for="loginEmail">Email</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    required
+                >
+
+                <label for="loginPassword">Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    required
+                >
+
+                <button type="submit">Log In</button>
+
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        const message = document.getElementById("message");
+
+        // Sign Up
+        document
+            .getElementById("signupForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const name = document.getElementById("signupName").value;
+                const email = document.getElementById("signupEmail").value;
+                const password = document.getElementById("signupPassword").value;
+
+                try {
+                    const response = await fetch("/signup", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    message.textContent = data.message;
+                    message.style.color = data.success ? "green" : "red";
+
+                    if (data.success) {
+                        document.getElementById("signupForm").reset();
+                    }
+
+                } catch (error) {
+                    message.textContent = "Unable to connect to server.";
+                    message.style.color = "red";
+                }
+            });
+
+        // Login
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const email = document.getElementById("loginEmail").value;
+                const password = document.getElementById("loginPassword").value;
+
+                try {
+                    const response = await fetch("/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        localStorage.setItem("loggedIn", "true");
+                        localStorage.setItem("userName", data.name);
+
+                        window.location.href = "/dashboard.html";
+                    } else {
+                        message.textContent = data.message;
+                        message.style.color = "red";
+                    }
+
+                } catch (error) {
+                    message.textContent = "Unable to connect to server.";
+                    message.style.color = "red";
+                }
+            });
+    </script>
+
+</body>
+</html>
